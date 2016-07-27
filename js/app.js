@@ -1,3 +1,6 @@
+// initial base speed of the enemies
+var speed = 500;
+
 // Enemies our player must avoid
 var Enemy = function() {
     // Variables applied to each of our instances go here,
@@ -7,7 +10,7 @@ var Enemy = function() {
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
     this.x = 0;
-    this.y = 60 + 165 * Math.random();
+    this.y = enemyHeight();
 };
 
 // Update the enemy's position, required method for game
@@ -16,12 +19,15 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
+
+    // if enemy is within canvas, assign enemy with specific speed
     if (this.x < 505) {
-        this.x += Math.random() * 750 * dt;
+        this.x += Math.random() * speed * dt;
     }
     else{
+        // if enemy is outside canvas, random assign it's position.
         this.x = 0;
-        this.y = 60 + 165 * Math.random();
+        this.y = enemyHeight();
     }
 };
 
@@ -53,9 +59,9 @@ Player.prototype.update = function() {
     if (this.y < 0) {
       // one second delay before resetting
       setTimeout(function() {
-        player.x = 202;
-        player.y = 400;
-      }, 1000);
+        speed += 1;
+        resetGame();
+      }, 500);
     }
 };
 // Change player's position based on user handleInput and make sure
@@ -77,7 +83,7 @@ Player.prototype.handleInput = function(d) {
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-var allEnemies = [new Enemy(), new Enemy(), new Enemy(), new Enemy()];
+var allEnemies = [new Enemy(), new Enemy(), new Enemy(), new Enemy(), new Enemy()];
 var player = new Player();
 
 
@@ -98,10 +104,34 @@ document.addEventListener('keyup', function(e) {
 function checkCollisions() {
   allEnemies.forEach(function(enemy) {
       // if collided
-      if(Math.abs(enemy.x - player.x) < 50 && Math.abs(enemy.y - player.y) < 85) {
-        // reset the game
-        player.x = 202;
-        player.y = 400;
+      if(Math.abs(enemy.x - player.x) < 50 && Math.abs(enemy.y - player.y) < 40) {
+        // resets the game
+        resetGame();
       }
   });
+}
+
+// to randomly assign enemy to a stone block row and return enemy y position.
+function enemyHeight() {
+  var randomNumber = Math.random();
+  var height;
+
+  switch (true) {
+    case (randomNumber < 0.333):
+      height = 60;
+      break;
+    case (0.334 < randomNumber && randomNumber < 0.666):
+      height = 60 + 83;
+      break;
+    default:
+      height = 60 + 83 + 83;
+  }
+
+  return height;
+}
+
+// reset the game by moving player to the middle of the bottom row.
+function resetGame() {
+  player.x = 202;
+  player.y = 400;
 }
