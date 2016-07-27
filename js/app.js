@@ -6,7 +6,7 @@ var TILE_WIDTH = 101,
 // Initialize speed, score, level and no collectible in the first level.
 var speed = 500,
     score = 0,
-    level = 1
+    level = 1,
     collectibleExist = false;
 
 // A character superclass
@@ -97,16 +97,16 @@ Player.prototype.update = function() {
 // it doesn't go off the screen
 Player.prototype.handleInput = function(d) {
     if (d === 'up' && this.y > 0) {
-      this.y -= 83;
+      this.y -= TILE_HEIGHT;
     }
     else if (d === 'left' && this.x > 0) {
-      this.x -= 101;
+      this.x -= TILE_WIDTH;
     }
     else if (d === 'right' && this.x < 404) {
-      this.x += 101;
+      this.x += TILE_WIDTH;
     }
     else if (d === 'down' && this.y < 450) {
-      this.y += 83;
+      this.y += TILE_HEIGHT;
     }
 };
 
@@ -174,19 +174,19 @@ function randomX() {
 
     switch (true) {
       case (randomNumber < 0.2):
-        x = 0;
+        x = 0 * TILE_WIDTH;
         break;
       case (0.2 <= randomNumber && randomNumber < 0.4):
-        x = 101;
+        x = 1 * TILE_WIDTH;
         break;
       case (0.4 <= randomNumber && randomNumber < 0.6):
-        x = 202;
+        x = 2 * TILE_WIDTH;
         break;
       case (0.6 <= randomNumber && randomNumber < 0.8):
-        x = 303;
+        x = 3 * TILE_WIDTH;
         break;
       default:
-        x = 404;
+        x = 4 * TILE_WIDTH;
     }
     return x;
 }
@@ -201,10 +201,10 @@ function randomY() {
         y = 145;
         break;
       case (0.333 <= randomNumber && randomNumber < 0.666):
-        y = 145 + 83;
+        y = 145 + TILE_HEIGHT;
         break;
       default:
-        y = 145 + 83 + 83;
+        y = 145 + TILE_HEIGHT * 2;
     }
 
     return y;
