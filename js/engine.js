@@ -159,8 +159,10 @@ var Engine = (function(global) {
             enemy.render();
         });
 
+        //render player and collectible
         player.render();
-        collectible.render();
+        if (collectibleExist)
+          collectible.render();
     }
 
     /* This function does nothing but it could have been a good place to

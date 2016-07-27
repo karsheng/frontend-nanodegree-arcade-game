@@ -1,7 +1,8 @@
-// initial base speed of the enemies
+// Global variables
+// Initialize speed, score, level and no collectible in the first level.
 var speed = 500;
 var score = 0;
-var level = 0;
+var level = 1;
 var collectibleExist = false;
 
 // Enemies our player must avoid
@@ -28,7 +29,7 @@ Enemy.prototype.update = function(dt) {
         this.x += Math.random() * speed * dt;
     }
     else{
-        // if enemy is outside canvas, random assign it's position.
+        // if enemy is outside canvas, randomly assign it's y position.
         this.x = 0;
         this.y = randomY();
     }
@@ -58,20 +59,23 @@ Player.prototype.render = function() {
 
 // Check if the player wins the game by reaching to the water-block
 Player.prototype.update = function() {
-    // reset the player's location if it reaches the top
+    // if player reaches water-block
     if (this.y < 80) {
-      //increase base speed of game, update score and level.
+      //increase base speed of game, update scores and increase level by 1.
       speed += 50;
       level += 1;
+      //score increases with level as it gets more difficult.
       score += level * 10;
 
       // 40% chance of having collectible in the next game
       collectibleExist = getCollectible();
       collectible.update();
 
-      resetGame();
+      //move player to starting position for new level
+      startLevel();
     }
 };
+
 // Change player's position based on user handleInput and make sure
 // it doesn't go off the screen
 Player.prototype.handleInput = function(d) {
@@ -101,20 +105,26 @@ Collectible.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+// Update position of collectibles
 Collectible.prototype.update = function() {
+  // if the collectible exist in the game
   if (collectibleExist) {
+    // randomly assigning position for the collectible
     this.x = randomX();
     this.y = randomY();
   } else {
+    // hide it if it doesn't exist in this level
     hide(this);
   }
-}
+};
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 var allEnemies = [new Enemy(), new Enemy(), new Enemy(), new Enemy(), new Enemy()];
 var player = new Player();
+
+// instantiate the collectible object called collectible
 var collectible = new Collectible();
 
 
@@ -137,7 +147,7 @@ function checkCollisions() {
       // if collided
       if(Math.abs(enemy.x - player.x) < 50 && Math.abs(enemy.y - player.y) < 40) {
         // resets the game
-        resetGame();
+        startLevel();
       }
   });
 }
@@ -147,11 +157,12 @@ function checkCollectible() {
       // if collided increase score by 50
       if(Math.abs(collectible.x - player.x) < 50 && Math.abs(collectible.y - player.y) < 40) {
         score += 50;
+        // hide the collectible once it's taken
         hide(collectible);
       }
 }
 
-// to randomly assign y coordinate to a stone block row and return the value
+// to randomly assign x coordinate to a stone block row and return the value
 function randomX() {
   var randomNumber = Math.random();
   var x;
@@ -205,11 +216,12 @@ function getCollectible() {
 }
 
 // reset the game by moving player to the middle of the bottom row.
-function resetGame() {
+function startLevel() {
   player.x = 202;
   player.y = 490;
 }
 
+// hide an element/object
 function hide(e) {
   e.x = 9999;
   e.y = 9999;
