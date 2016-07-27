@@ -26,7 +26,7 @@ var Engine = (function(global) {
         lastTime;
 
     canvas.width = 505;
-    canvas.height = 606;
+    canvas.height = 707;
     doc.body.appendChild(canvas);
 
     /* This function serves as the kickoff point for the game loop itself
@@ -108,6 +108,7 @@ var Engine = (function(global) {
          * for that particular row of the game level.
          */
         var rowImages = [
+                'images/gray.png',          // Score and level row
                 'images/water-block.png',   // Top row is water
                 'images/stone-block.png',   // Row 1 of 3 of stone
                 'images/stone-block.png',   // Row 2 of 3 of stone
@@ -115,7 +116,7 @@ var Engine = (function(global) {
                 'images/grass-block.png',   // Row 1 of 2 of grass
                 'images/grass-block.png'    // Row 2 of 2 of grass
             ],
-            numRows = 6,
+            numRows = 7,
             numCols = 5,
             row, col;
 
@@ -123,6 +124,7 @@ var Engine = (function(global) {
          * and, using the rowImages array, draw the correct image for that
          * portion of the "grid"
          */
+
         for (row = 0; row < numRows; row++) {
             for (col = 0; col < numCols; col++) {
                 /* The drawImage function of the canvas' context element
@@ -133,6 +135,10 @@ var Engine = (function(global) {
                  * we're using them over and over.
                  */
                 ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
+                // display current score and level
+                ctx.font = "40px Arial";
+                ctx.strokeText('Score: ' + score, 0, 100);
+                ctx.strokeText('LVL ' + level, 360, 100);
             }
         }
 
@@ -167,6 +173,7 @@ var Engine = (function(global) {
      * all of these images are properly loaded our game will start.
      */
     Resources.load([
+        'images/gray.png',
         'images/stone-block.png',
         'images/water-block.png',
         'images/grass-block.png',

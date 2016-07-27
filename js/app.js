@@ -1,5 +1,7 @@
 // initial base speed of the enemies
 var speed = 500;
+var score = 0;
+var level = 0;
 
 // Enemies our player must avoid
 var Enemy = function() {
@@ -45,7 +47,7 @@ var Player = function() {
     this.sprite = 'images/char-boy.png';
     //initial location set to center of the bottom row
     this.x = 202;
-    this.y = 400;
+    this.y = 490;
 };
 
 // Draw the player on the screen
@@ -56,12 +58,12 @@ Player.prototype.render = function() {
 // Check if the player wins the game by reaching to the water-block
 Player.prototype.update = function() {
     // reset the player's location if it reaches the top
-    if (this.y < 0) {
-      // one second delay before resetting
-      setTimeout(function() {
-        speed += 1;
-        resetGame();
-      }, 500);
+    if (this.y < 80) {
+      //increase base speed of game, update score and level.
+      speed += 50;
+      level += 1;
+      score += level * 10;
+      resetGame();
     }
 };
 // Change player's position based on user handleInput and make sure
@@ -76,7 +78,7 @@ Player.prototype.handleInput = function(d) {
     else if (d === 'right' && this.x < 404) {
       this.x += 101;
     }
-    else if (d === 'down' && this.y < 400) {
+    else if (d === 'down' && this.y < 450) {
       this.y += 83;
     }
 };
@@ -118,13 +120,13 @@ function enemyHeight() {
 
   switch (true) {
     case (randomNumber < 0.333):
-      height = 60;
+      height = 145;
       break;
     case (0.334 < randomNumber && randomNumber < 0.666):
-      height = 60 + 83;
+      height = 145 + 83;
       break;
     default:
-      height = 60 + 83 + 83;
+      height = 145 + 83 + 83;
   }
 
   return height;
@@ -133,5 +135,5 @@ function enemyHeight() {
 // reset the game by moving player to the middle of the bottom row.
 function resetGame() {
   player.x = 202;
-  player.y = 400;
+  player.y = 490;
 }
