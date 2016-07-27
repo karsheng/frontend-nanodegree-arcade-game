@@ -2,6 +2,7 @@
 var speed = 500;
 var score = 0;
 var level = 0;
+var collectibleExist = false;
 
 // Enemies our player must avoid
 var Enemy = function() {
@@ -12,7 +13,7 @@ var Enemy = function() {
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
     this.x = 0;
-    this.y = enemyHeight();
+    this.y = randomY();
 };
 
 // Update the enemy's position, required method for game
@@ -29,7 +30,7 @@ Enemy.prototype.update = function(dt) {
     else{
         // if enemy is outside canvas, random assign it's position.
         this.x = 0;
-        this.y = enemyHeight();
+        this.y = randomY();
     }
 };
 
@@ -63,6 +64,11 @@ Player.prototype.update = function() {
       speed += 50;
       level += 1;
       score += level * 10;
+
+      // 40% chance of having collectible in the next game
+      collectibleExist = getCollectible();
+      collectible.update();
+
       resetGame();
     }
 };
@@ -82,11 +88,34 @@ Player.prototype.handleInput = function(d) {
       this.y += 83;
     }
 };
+
+// The collectible class
+var Collectible = function() {
+    this.sprite = 'images/star.png';
+    //collectible is hidden from canvas initially
+    hide(this);
+};
+
+// Draw the collectible on the screen
+Collectible.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
+Collectible.prototype.update = function() {
+  if (collectibleExist) {
+    this.x = randomX();
+    this.y = randomY();
+  } else {
+    hide(this);
+  }
+}
+
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 var allEnemies = [new Enemy(), new Enemy(), new Enemy(), new Enemy(), new Enemy()];
 var player = new Player();
+var collectible = new Collectible();
 
 
 // This listens for key presses and sends the keys to your
@@ -113,27 +142,75 @@ function checkCollisions() {
   });
 }
 
-// to randomly assign enemy to a stone block row and return enemy y position.
-function enemyHeight() {
+// Check if player gets collectible by colliding with it.
+function checkCollectible() {
+      // if collided increase score by 50
+      if(Math.abs(collectible.x - player.x) < 50 && Math.abs(collectible.y - player.y) < 40) {
+        score += 50;
+        hide(collectible);
+      }
+}
+
+// to randomly assign y coordinate to a stone block row and return the value
+function randomX() {
   var randomNumber = Math.random();
-  var height;
+  var x;
+
+  switch (true) {
+    case (randomNumber < 0.2):
+      x = 0;
+      break;
+    case (0.2 <= randomNumber && randomNumber < 0.4):
+      x = 101;
+      break;
+    case (0.4 <= randomNumber && randomNumber < 0.6):
+      x = 202;
+      break;
+    case (0.6 <= randomNumber && randomNumber < 0.8):
+      x = 303;
+      break;
+    default:
+      x = 404;
+  }
+
+  return x;
+}
+
+// to randomly assign y coordinate to a stone block row and return the value
+function randomY() {
+  var randomNumber = Math.random();
+  var y;
 
   switch (true) {
     case (randomNumber < 0.333):
-      height = 145;
+      y = 145;
       break;
-    case (0.334 < randomNumber && randomNumber < 0.666):
-      height = 145 + 83;
+    case (0.333 <= randomNumber && randomNumber < 0.666):
+      y = 145 + 83;
       break;
     default:
-      height = 145 + 83 + 83;
+      y = 145 + 83 + 83;
   }
 
-  return height;
+  return y;
+}
+
+// 40% chance of having collectible in game
+function getCollectible() {
+  var chance = Math.random();
+   if (chance < 0.4) {
+     return true;
+   }
+   return false;
 }
 
 // reset the game by moving player to the middle of the bottom row.
 function resetGame() {
   player.x = 202;
   player.y = 490;
+}
+
+function hide(e) {
+  e.x = 9999;
+  e.y = 9999;
 }
