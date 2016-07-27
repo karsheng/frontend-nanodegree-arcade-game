@@ -193,4 +193,25 @@ var Engine = (function(global) {
      * from within their app.js files.
      */
     global.ctx = ctx;
+
+    // Check for collision between player and enemies
+    function checkCollisions() {
+      allEnemies.forEach(function(enemy) {
+          // if collided
+          if(Math.abs(enemy.x - player.x) < 50 && Math.abs(enemy.y - player.y) < 40) {
+            // resets the game
+            player.startLevel();
+          }
+      });
+    }
+
+    // Check if player gets collectible by colliding with it.
+    function checkCollectible() {
+          // if collided increase score by 50
+          if(Math.abs(collectible.x - player.x) < 50 && Math.abs(collectible.y - player.y) < 40) {
+            score += 50;
+            // hide the collectible once it's taken
+            hide(collectible);
+          }
+    }
 })(this);
